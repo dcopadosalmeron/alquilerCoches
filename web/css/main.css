@@ -1,0 +1,11 @@
+html {
+    height: 100%;
+}
+
+body {
+    padding: 50px;
+}
+
+.formBox{
+    margin:0 auto;
+}
