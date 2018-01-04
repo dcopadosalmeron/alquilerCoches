@@ -55,7 +55,7 @@ class Cliente
     private $apellidos;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      * @Assert\Date(
      *     message="La fecha no es válida."
      * )
