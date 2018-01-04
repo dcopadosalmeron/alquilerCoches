@@ -1,5 +1,6 @@
 <?php
 namespace AppBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -38,6 +39,16 @@ class Coche
      * @var double
      */
     private $precioDia;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Ciudad", inversedBy="coches")
+     */
+    protected $ciudad;
+
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Alquiler", mappedBy="coche")
+     */
+    protected $alquileres;
 
     /**
      * Get id
@@ -143,5 +154,70 @@ class Coche
     public function getPrecioDia()
     {
         return $this->precioDia;
+    }
+
+    /**
+     * Set ciudad
+     *
+     * @param \AppBundle\Entity\Ciudad $ciudad
+     *
+     * @return Coche
+     */
+    public function setCiudad(\AppBundle\Entity\Ciudad $ciudad = null)
+    {
+        $this->ciudad = $ciudad;
+
+        return $this;
+    }
+
+    /**
+     * Get ciudad
+     *
+     * @return \AppBundle\Entity\Ciudad
+     */
+    public function getCiudad()
+    {
+        return $this->ciudad;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->alquileres = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add alquilere
+     *
+     * @param \AppBundle\Entity\Alquiler $alquilere
+     *
+     * @return Coche
+     */
+    public function addAlquilere(\AppBundle\Entity\Alquiler $alquilere)
+    {
+        $this->alquileres[] = $alquilere;
+
+        return $this;
+    }
+
+    /**
+     * Remove alquilere
+     *
+     * @param \AppBundle\Entity\Alquiler $alquilere
+     */
+    public function removeAlquilere(\AppBundle\Entity\Alquiler $alquilere)
+    {
+        $this->alquileres->removeElement($alquilere);
+    }
+
+    /**
+     * Get alquileres
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAlquileres()
+    {
+        return $this->alquileres;
     }
 }

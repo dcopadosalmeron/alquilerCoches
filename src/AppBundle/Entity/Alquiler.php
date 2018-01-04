@@ -28,6 +28,16 @@ class Alquiler
     private $fechaFin;
 
     /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Coche", inversedBy="alquileres")
+     */
+    protected $coche;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Cliente", inversedBy="alquileres")
+     */
+    protected $cliente;
+
+    /**
      * Get id
      *
      * @return integer
@@ -83,5 +93,53 @@ class Alquiler
     public function getFechaFin()
     {
         return $this->fechaFin;
+    }
+
+    /**
+     * Set coche
+     *
+     * @param \AppBundle\Entity\Coche $coche
+     *
+     * @return Alquiler
+     */
+    public function setCoche(\AppBundle\Entity\Coche $coche = null)
+    {
+        $this->coche = $coche;
+
+        return $this;
+    }
+
+    /**
+     * Get coche
+     *
+     * @return \AppBundle\Entity\Coche
+     */
+    public function getCoche()
+    {
+        return $this->coche;
+    }
+
+    /**
+     * Set cliente
+     *
+     * @param \AppBundle\Entity\Cliente $cliente
+     *
+     * @return Alquiler
+     */
+    public function setCliente(\AppBundle\Entity\Cliente $cliente = null)
+    {
+        $this->cliente = $cliente;
+
+        return $this;
+    }
+
+    /**
+     * Get cliente
+     *
+     * @return \AppBundle\Entity\Cliente
+     */
+    public function getCliente()
+    {
+        return $this->cliente;
     }
 }

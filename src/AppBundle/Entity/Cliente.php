@@ -65,6 +65,11 @@ class Cliente
     private $fechaNacimiento;
 
     /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Alquiler", mappedBy="cliente")
+     */
+    protected $alquileres;
+
+    /**
      * Get id
      *
      * @return integer
@@ -168,5 +173,46 @@ class Cliente
     public function getFechaNacimiento()
     {
         return $this->fechaNacimiento;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->alquileres = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add alquilere
+     *
+     * @param \AppBundle\Entity\Alquiler $alquilere
+     *
+     * @return Cliente
+     */
+    public function addAlquilere(\AppBundle\Entity\Alquiler $alquilere)
+    {
+        $this->alquileres[] = $alquilere;
+
+        return $this;
+    }
+
+    /**
+     * Remove alquilere
+     *
+     * @param \AppBundle\Entity\Alquiler $alquilere
+     */
+    public function removeAlquilere(\AppBundle\Entity\Alquiler $alquilere)
+    {
+        $this->alquileres->removeElement($alquilere);
+    }
+
+    /**
+     * Get alquileres
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAlquileres()
+    {
+        return $this->alquileres;
     }
 }

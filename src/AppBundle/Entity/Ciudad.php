@@ -1,5 +1,6 @@
 <?php
 namespace AppBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -27,6 +28,10 @@ class Ciudad
      */
     private $provincia;
 
+    /**
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\Coche", mappedBy="ciudad")
+     */
+    protected $coches;
 
     /**
      * Get id
@@ -84,5 +89,46 @@ class Ciudad
     public function getProvincia()
     {
         return $this->provincia;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->coches = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add coch
+     *
+     * @param \AppBundle\Entity\Coche $coch
+     *
+     * @return Ciudad
+     */
+    public function addCoch(\AppBundle\Entity\Coche $coch)
+    {
+        $this->coches[] = $coch;
+
+        return $this;
+    }
+
+    /**
+     * Remove coch
+     *
+     * @param \AppBundle\Entity\Coche $coch
+     */
+    public function removeCoch(\AppBundle\Entity\Coche $coch)
+    {
+        $this->coches->removeElement($coch);
+    }
+
+    /**
+     * Get coches
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCoches()
+    {
+        return $this->coches;
     }
 }
