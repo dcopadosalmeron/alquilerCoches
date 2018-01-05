@@ -1,6 +1,5 @@
 $(function () {
     setSelect2();
-    dateTimeLoad();
     $(window).resize(function () {
         setSelect2();
     });
@@ -17,14 +16,4 @@ function setSelect2() {
             theme: "bootstrap"
         });
     }
-}
-
-function dateTimeLoad() {
-    $.datetimepicker.setLocale('es');
-    $(".fecha").datetimepicker({
-        format: 'd-m-Y',
-        step: 30,
-        timepicker: false,
-        minDate:0
-    });
 }

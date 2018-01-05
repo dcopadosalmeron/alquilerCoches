@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2 class="text-center">Alquiler de Vehiculos</h2>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width:67%">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4 class="text-center">Registrarse como cliente</h4>
+            {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+            {{ form_widget(form) }}
+            <div class="form-group">
+                <button type="submit" name="enviar" class="btn btn-success pull-right"><i
+                            class="fa fa-check-square-o"></i>
+                    Continuar
+                </button>
+            </div>
+            {{ form_end(form) }}
+        </div>
+        <div class="col-md-6">
+            <h4 class="text-center">Identificarse</h4>
+            {{ form_start(form2, {attr: {novalidate: 'novalidate'}}) }}
+            {{ form_widget(form2) }}
+            <div class="form-group">
+                <button type="submit" name="enviar" class="btn btn-success pull-right"><i
+                            class="fa fa-check-square-o"></i>
+                    Continuar
+                </button>
+            </div>
+            {{ form_end(form2) }}
+        </div>
+    </div>
+
+    <a href="{{ path('coches', {'ciudad': ciudad}) }}" style="margin-top: 15px;"
+       class="btn btn-default pull-right"><i
+                class="fa fa-arrow-circle-left"
+                aria-hidden="true"></i> Volver</a>
+
+
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        $(function () {
+            dateTimeLoad();
+        });
+
+        function dateTimeLoad() {
+            $.datetimepicker.setLocale('es');
+            $(".fecha").datetimepicker({
+                format: 'd-m-Y',
+                step: 30,
+                timepicker: false
+            });
+        }
+    </script>
+{% endblock %}
+

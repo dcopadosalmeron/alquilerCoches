@@ -16,3 +16,21 @@
     {{ form_end(form) }}
 {% endblock %}
 
+{% block javascripts %}
+    <script>
+        $(function () {
+            dateTimeLoad();
+        });
+
+        function dateTimeLoad() {
+            $.datetimepicker.setLocale('es');
+            $(".fecha").datetimepicker({
+                format: 'd-m-Y',
+                step: 30,
+                timepicker: false,
+                minDate:0
+            });
+        }
+    </script>
+{% endblock %}
+

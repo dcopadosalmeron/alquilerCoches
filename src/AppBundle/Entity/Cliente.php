@@ -28,7 +28,7 @@ class Cliente
      * @ORM\Column(type="string")
      * @Assert\Regex(
      *     pattern="/^[a-zA-ZñÑ\sáéíóúüÁÉÍÓÚÜ]+$/",
-     *     message="El nombre no puede contener numeros o símbolos."
+     *     message="El nombre no puede contener números o símbolos."
      * )
      * @Assert\Length(
      *      max = 30,
@@ -43,7 +43,7 @@ class Cliente
      * @ORM\Column(type="string")
      * @Assert\Regex(
      *     pattern="/^[a-zA-ZñÑ\sáéíóúüÁÉÍÓÚÜ]+$/",
-     *     message="Los apellidos no pueden contener numeros o símbolos."
+     *     message="Los apellidos no pueden contener números o símbolos."
      * )
      * @Assert\Length(
      *      max = 50,
@@ -56,9 +56,6 @@ class Cliente
 
     /**
      * @ORM\Column(type="date")
-     * @Assert\Date(
-     *     message="La fecha no es válida."
-     * )
      * @Assert\NotBlank(message="La fecha es obligatoria.")
      * @var \DateTime
      */
