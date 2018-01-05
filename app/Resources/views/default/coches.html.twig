@@ -4,7 +4,7 @@
     <div class="col-md-6 col-md-offset-3">
         <h2 class="text-center">Alquiler de Vehiculos</h2>
         <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width:0%">
+            <div class="progress-bar" role="progressbar" style="width:33%">
             </div>
         </div>
         {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
@@ -13,6 +13,9 @@
             <button type="submit" name="enviar" class="btn btn-success pull-right"><i class="fa fa-check-square-o"></i>
                 Continuar
             </button>
+            <a href="{{ path('inicio') }}" style="margin-right: 5px;" class="btn btn-default pull-right"><i
+                        class="fa fa-arrow-circle-left"
+                        aria-hidden="true"></i> Volver</a>
         </div>
         {{ form_end(form) }}
     </div>
