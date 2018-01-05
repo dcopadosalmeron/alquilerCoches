@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
     <title>{% block title %}Alquiler de Vehiculos{% endblock %}</title>
     <link rel="stylesheet" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
@@ -12,7 +13,7 @@
     <link rel="stylesheet" href="{{ asset('datePicker/jquery.datetimepicker.css') }}">
     <link rel="stylesheet" href="{{ asset('css/main.css') }}">
     {% block stylesheets %}{% endblock %}
-    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -21,7 +22,28 @@
     <![endif]-->
 </head>
 <body>
-{% block body %}{% endblock %}
+<div class="col-md-6 col-md-offset-3">
+    {% if app.session.flashBag.has('estado') %}
+        {% set mensajes = app.session.flashBag.get('estado') %}
+        {% for mensaje in mensajes %}
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar"><span
+                            aria-hidden="true">&times;</span></button>
+                {{ mensaje }}
+            </div>
+        {% endfor %}
+    {% elseif app.session.flashBag.has('error') %}
+        {% set mensajes = app.session.flashBag.get('error') %}
+        {% for mensaje in mensajes %}
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Cerrar"><span
+                            aria-hidden="true">&times;</span></button>
+                {{ mensaje }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% block body %}{% endblock %}
+</div>
 <script src="{{ asset('js/jquery-1.12.4.min.js') }}"></script>
 <script src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('select2/js/select2.min.js') }}"></script>

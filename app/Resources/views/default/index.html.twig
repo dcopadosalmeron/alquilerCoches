@@ -1,20 +1,18 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <div class="col-md-6 col-md-offset-3">
-        <h2 class="text-center">Alquiler de Vehiculos</h2>
-        <div class="progress">
-            <div class="progress-bar" role="progressbar" style="width:0%">
-            </div>
+    <h2 class="text-center">Alquiler de Vehiculos</h2>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width:0%">
         </div>
-        {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-        {{ form_widget(form) }}
-        <div class="form-group">
-            <button type="submit" name="enviar" class="btn btn-success pull-right"><i class="fa fa-check-square-o"></i>
-                Continuar
-            </button>
-        </div>
-        {{ form_end(form) }}
     </div>
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+    {{ form_widget(form) }}
+    <div class="form-group">
+        <button type="submit" name="enviar" class="btn btn-success pull-right"><i class="fa fa-check-square-o"></i>
+            Continuar
+        </button>
+    </div>
+    {{ form_end(form) }}
 {% endblock %}
 

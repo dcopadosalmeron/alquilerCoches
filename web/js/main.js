@@ -4,6 +4,9 @@ $(function () {
     $(window).resize(function () {
         setSelect2();
     });
+    setTimeout(function() {
+        $(".alert-dismissible").fadeOut(500);
+    },3000);
 });
 
 function setSelect2() {
