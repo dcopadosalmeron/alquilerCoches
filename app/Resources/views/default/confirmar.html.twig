@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2 class="text-center">Alquiler de Vehiculos</h2>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width:100%">
+        </div>
+    </div>
+    <div class="well">
+        <p>
+            Cliente: <b>{{ alquiler.cliente.nombre|title~' '~alquiler.cliente.apellidos|title }}</b><br/>
+            Coche: <b>{{ alquiler.coche.marca|title~' '~alquiler.coche.modelo|title }}</b><br/>
+            Precio por día: <b>{{ alquiler.coche.precioDia|replace({'.': ','}) }}€</b><br/>
+            Ciudad: <b>{{ ciudad.nombre|title~'('~ciudad.provincia|title~')' }}</b><br/>
+            Período: <b>Desde {{ alquiler.fechaInicio~' hasta '~alquiler.fechaFin }}</b><br/>
+        </p>
+        <h3>El coste total es de: {{ precio|replace({'.': ','}) }}€</h3>
+    </div>
+    <form method="post" action="{{ path('alquilar') }}">
+        <button type="submit" name="enviar" class="btn btn-success pull-right"><i class="fa fa-check-square-o"></i>
+            Confirmar
+        </button>
+        <a href="{{ path('inicio') }}" style="margin-right: 5px;" class="btn btn-default pull-right"><i
+                    class="fa fa-home"
+                    aria-hidden="true"></i> Inicio</a>
+    </form>
+{% endblock %}

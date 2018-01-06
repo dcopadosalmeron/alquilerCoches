@@ -24,11 +24,18 @@
 
         function dateTimeLoad() {
             $.datetimepicker.setLocale('es');
-            $(".fecha").datetimepicker({
+            $(".fecha1").datetimepicker({
                 format: 'd-m-Y',
                 step: 30,
                 timepicker: false,
                 minDate:0
+            });
+            $(".fecha2").datetimepicker({
+                format: 'd-m-Y',
+                step: 30,
+                timepicker: false,
+                minDate:'+1970/01/02',
+                defaultDate:'+1970/01/02'
             });
         }
     </script>

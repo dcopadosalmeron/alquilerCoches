@@ -15,6 +15,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class DefaultController extends Controller
 {
@@ -40,7 +41,7 @@ class DefaultController extends Controller
                     ))
                 ),
                 'attr' => array(
-                    'class' => 'fecha',
+                    'class' => 'fecha1',
                     'placeholder' => 'Seleccione una fecha inicial',
                 )
             ))
@@ -52,7 +53,7 @@ class DefaultController extends Controller
                     ))
                 ),
                 'attr' => array(
-                    'class' => 'fecha',
+                    'class' => 'fecha2',
                     'placeholder' => 'Seleccione una fecha final',
                 )
             ))
@@ -193,10 +194,9 @@ class DefaultController extends Controller
                     //Calculamos usando diff y la fecha actual
                     $calculo = $fechaNacimiento->diff(new \DateTime());
 
-                    if ($calculo->y < 18)
-                    {
+                    if ($calculo->y < 18) {
                         $this->addFlash('error', 'Debe tener 18 años para poder alquilar');
-                    }else {
+                    } else {
                         $cliente->setFechaNacimiento($fechaNacimiento);
 
                         try {
@@ -206,9 +206,7 @@ class DefaultController extends Controller
                             $alquiler->setCliente($cliente);
                             $session->set('alquiler', $alquiler);
 
-                            /*return $this->redirectToRoute('coches', [
-                                'ciudad' => $data['ciudad']->getId()
-                            ]);*/
+                            return $this->redirectToRoute('confirmacion');
 
                         } catch (UniqueConstraintViolationException $e) {
                             $this->addFlash('error', 'Ya existe un cliente con este DNI');
@@ -240,9 +238,7 @@ class DefaultController extends Controller
                         $alquiler->setCliente($cliente);
                         $session->set('alquiler', $alquiler);
 
-                        /*return $this->redirectToRoute('coches', [
-                            'ciudad' => $data['ciudad']->getId()
-                        ]);*/
+                        return $this->redirectToRoute('confirmacion');
                     } catch (NoResultException $e) {
                         $this->addFlash('error', 'No existe ningún cliente con este DNI');
                     } catch (\Exception $e) {
@@ -257,5 +253,99 @@ class DefaultController extends Controller
             'form2' => $form2->createView(),
             'ciudad' => $alquiler->getCoche()->getCiudad()->getId()
         ]);
+    }
+
+    /**
+     * @Route("/confirmacion", name="confirmacion")
+     * @Method({"GET"})
+     */
+    public function form4(Request $request)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        //Obtenemos la variable de sesión alquiler
+        $session = $this->get("session");
+        $alquiler = $session->get('alquiler');
+
+        if (!$alquiler) {
+            return $this->redirectToRoute('inicio');
+        }
+
+        $ciudad = $em->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Ciudad', 'c')
+            ->join('c.coches', 'co')
+            ->where('co = :coche')
+            ->setParameter('coche', $alquiler->getCoche())
+            ->getQuery()
+            ->getSingleResult();
+
+        $fechaInicio = \DateTime::createFromFormat('d-m-Y', $alquiler->getFechaInicio());
+        $fechaFin = \DateTime::createFromFormat('d-m-Y', $alquiler->getFechaFin());
+
+        //Calculamos los días con diff
+        $dias = $fechaInicio->diff($fechaFin)->d;
+
+        //Calculamos la cuantía con los dias y el precio por dia del coche
+        $precio = $dias * $alquiler->getCoche()->getPrecioDia();
+
+        return $this->render('default/confirmar.html.twig', [
+            'alquiler' => $alquiler,
+            'precio' => $precio,
+            'ciudad' => $ciudad
+        ]);
+    }
+
+    /**
+     * @Route("/confirmacion", name="alquilar")
+     * @Method({"POST"})
+     */
+    public function alquilar(Request $request)
+    {
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        //Obtenemos la variable de sesión alquiler
+        $session = $this->get("session");
+        $alquiler = $session->get('alquiler');
+
+        if (!$alquiler) {
+            return $this->redirectToRoute('inicio');
+        }
+        $coche = $em->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Coche', 'c')
+            ->where('c.id = :id')
+            ->setParameter('id', $alquiler->getCoche()->getId())
+            ->getQuery()
+            ->getSingleResult();
+
+        $cliente = $em->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Cliente', 'c')
+            ->where('c.id = :id')
+            ->setParameter('id', $alquiler->getCliente()->getId())
+            ->getQuery()
+            ->getSingleResult();
+
+        $fechaInicio = \DateTime::createFromFormat('d-m-Y', $alquiler->getFechaInicio());
+        $fechaFin = \DateTime::createFromFormat('d-m-Y', $alquiler->getFechaFin());
+
+        $em->persist($alquiler);
+
+        try {
+            $alquiler->setCoche($coche);
+            $alquiler->setCliente($cliente);
+            $alquiler->setFechaInicio($fechaInicio);
+            $alquiler->setFechaFin($fechaFin);
+
+            $em->flush();
+            $this->addFlash('estado', 'Alquiler realizado con éxito');
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'No se ha podido realizar el alquiler');
+        }
+
+        return $this->redirectToRoute('inicio');
     }
 }
