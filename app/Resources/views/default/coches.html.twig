@@ -6,16 +6,23 @@
         <div class="progress-bar" role="progressbar" style="width:33%">
         </div>
     </div>
-    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-    {{ form_widget(form) }}
-    <div class="form-group">
-        <button type="submit" name="enviar" class="btn btn-success pull-right"><i class="fa fa-check-square-o"></i>
-            Continuar
-        </button>
-        <a href="{{ path('inicio') }}" style="margin-right: 5px;" class="btn btn-default pull-right"><i
+    {% if not resultados %}<h4 class="text-center" style="margin-top: 30px;">No hay coches disponibles para esas fechas</h4>
+
+        <a href="{{ path('inicio') }}" class="btn btn-default pull-right"><i
                     class="fa fa-arrow-circle-left"
                     aria-hidden="true"></i> Volver</a>
-    </div>
-    {{ form_end(form) }}
+    {% else %}
+        {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+        {{ form_widget(form) }}
+        <div class="form-group">
+            <button type="submit" name="enviar" class="btn btn-success pull-right"><i class="fa fa-check-square-o"></i>
+                Continuar
+            </button>
+            <a href="{{ path('inicio') }}" style="margin-right: 5px;" class="btn btn-default pull-right"><i
+                        class="fa fa-arrow-circle-left"
+                        aria-hidden="true"></i> Volver</a>
+        </div>
+        {{ form_end(form) }}
+    {% endif %}
 {% endblock %}
 

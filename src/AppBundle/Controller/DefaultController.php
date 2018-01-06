@@ -13,6 +13,7 @@ use Doctrine\ORM\NoResultException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -83,15 +84,23 @@ class DefaultController extends Controller
             //Datos recibidos
             $data = $form->getData();
 
-            //Guardamos el objeto alquiler con las fechas en sesión
-            $alquiler = new Alquiler();
-            $alquiler->setFechaInicio($data['fechaInicio']);
-            $alquiler->setFechaFin($data['fechaFin']);
-            $session->set('alquiler', $alquiler);
+            $fechaInicio = \DateTime::createFromFormat('d-m-Y', $data['fechaInicio']);
+            $fechaFin = \DateTime::createFromFormat('d-m-Y', $data['fechaFin']);
 
-            return $this->redirectToRoute('coches', [
-                'ciudad' => $data['ciudad']->getId()
-            ]);
+            //Comprobamos si la fecha inicial es igual o mayor a hoy y si la fecha inicial es menor a la final
+            if ($fechaInicio >= new \DateTime() && $fechaInicio < $fechaFin) {
+                //Guardamos el objeto alquiler con las fechas en sesión
+                $alquiler = new Alquiler();
+                $alquiler->setFechaInicio($data['fechaInicio']);
+                $alquiler->setFechaFin($data['fechaFin']);
+                $session->set('alquiler', $alquiler);
+
+                return $this->redirectToRoute('coches', [
+                    'ciudad' => $data['ciudad']->getId()
+                ]);
+            } else {
+                $this->addFlash('error', 'El rango de fechas no es válido');
+            }
         }
 
         return $this->render('default/index.html.twig', [
@@ -115,11 +124,38 @@ class DefaultController extends Controller
             return $this->redirectToRoute('inicio');
         }
 
+        $coches = $em->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle:Coche', 'c')
+            ->join('c.ciudad', 'ci')
+            ->leftJoin('c.alquileres', 'al')
+            ->where('ci = :ciudad')
+            ->setParameter('ciudad', $ciudad)
+            ->orderBy('c.precioDia', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        $cochesFinal = [];
+        $fechaInicio = \DateTime::createFromFormat('!d-m-Y', $alquiler->getFechaInicio());
+        $fechaFin = \DateTime::createFromFormat('!d-m-Y', $alquiler->getFechaFin());
+
+        foreach ($coches as $coche){
+            $rangoValido=true;
+            foreach ($coche->getAlquileres() as $al){
+                if(!($fechaFin <= $al->getFechaInicio() || $fechaInicio >= $al->getFechaFin())){
+                    $rangoValido = false;
+                }
+            }
+            if($rangoValido){
+                $cochesFinal[] = $coche;
+            }
+        }
+
         //Segundo formulario
         $form = $this->createFormBuilder()
-            ->add('coche', EntityType::class, array(
+            ->add('coche', ChoiceType::class, array(
                 'label' => 'Seleccione un coche',
-                'class' => Coche::class,
+                'choices' => $cochesFinal,
                 'constraints' => array(
                     new NotBlank(array(
                         'message' => 'El coche es obligatorio.'
@@ -146,7 +182,8 @@ class DefaultController extends Controller
         }
 
         return $this->render('default/coches.html.twig', [
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'resultados' => count($cochesFinal)>0
         ]);
     }
 
