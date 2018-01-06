@@ -5,18 +5,19 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Alquiler;
 use AppBundle\Entity\Ciudad;
 use AppBundle\Entity\Cliente;
-use AppBundle\Entity\Coche;
 use AppBundle\Form\Type\ClienteType;
+use AppBundle\Validator\Constraints\dni;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NoResultException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class DefaultController extends Controller
 {
@@ -39,6 +40,10 @@ class DefaultController extends Controller
                 'constraints' => array(
                     new NotBlank(array(
                         'message' => 'La fecha es obligatoria.'
+                    )),
+                    new Regex(array(
+                        'pattern' => "/^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-[0-9]{4}$/",
+                        'message' => "El formato de fecha no es válido."
                     ))
                 ),
                 'attr' => array(
@@ -51,6 +56,10 @@ class DefaultController extends Controller
                 'constraints' => array(
                     new NotBlank(array(
                         'message' => 'La fecha es obligatoria.'
+                    )),
+                    new Regex(array(
+                        'pattern' => "/^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-[0-9]{4}$/",
+                        'message' => "El formato de fecha no es válido."
                     ))
                 ),
                 'attr' => array(
@@ -89,6 +98,7 @@ class DefaultController extends Controller
 
             //Comprobamos si la fecha inicial es igual o mayor a hoy y si la fecha inicial es menor a la final
             if ($fechaInicio >= new \DateTime() && $fechaInicio < $fechaFin) {
+
                 //Guardamos el objeto alquiler con las fechas en sesión
                 $alquiler = new Alquiler();
                 $alquiler->setFechaInicio($data['fechaInicio']);
@@ -124,6 +134,7 @@ class DefaultController extends Controller
             return $this->redirectToRoute('inicio');
         }
 
+        //Obtenemos los coches de la ciudad seleccionada
         $coches = $em->createQueryBuilder()
             ->select('c')
             ->from('AppBundle:Coche', 'c')
@@ -139,6 +150,7 @@ class DefaultController extends Controller
         $fechaInicio = \DateTime::createFromFormat('!d-m-Y', $alquiler->getFechaInicio());
         $fechaFin = \DateTime::createFromFormat('!d-m-Y', $alquiler->getFechaFin());
 
+        //Obtenemos los coches disponibles para el rango de fechas seleccionado
         foreach ($coches as $coche){
             $rangoValido=true;
             foreach ($coche->getAlquileres() as $al){
@@ -215,7 +227,8 @@ class DefaultController extends Controller
                 'constraints' => array(
                     new NotBlank(array(
                         'message' => 'El DNI es obligatorio.'
-                    ))
+                    )),
+                    new dni()
                 )
             ))->getForm();
 

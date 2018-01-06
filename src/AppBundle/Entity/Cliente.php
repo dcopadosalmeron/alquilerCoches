@@ -2,6 +2,7 @@
 namespace AppBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use AppBundle\Validator\Constraints as MyAssert;
 
 /**
  * @ORM\Table(name="cliente", uniqueConstraints={@ORM\UniqueConstraint(name="cliente_unique", columns={"dni"})})
@@ -20,6 +21,7 @@ class Cliente
     /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank(message="El DNI es obligatorio.")
+     * @MyAssert\dni()
      * @var string
      */
     private $dni;
@@ -42,8 +44,8 @@ class Cliente
     /**
      * @ORM\Column(type="string")
      * @Assert\Regex(
-     *     pattern="/^[a-zA-ZñÑ\sáéíóúüÁÉÍÓÚÜ]+$/",
-     *     message="Los apellidos no pueden contener números o símbolos."
+     *     pattern="/^[a-zA-ZñÑ\sáéíóúüÁÉÍÓÚÜ]+\s{1}[a-zA-ZñÑ\sáéíóúüÁÉÍÓÚÜ]+$/",
+     *     message="Los apellidos no pueden contener números o símbolos (al menos dos palabras)."
      * )
      * @Assert\Length(
      *      max = 50,
@@ -57,6 +59,10 @@ class Cliente
     /**
      * @ORM\Column(type="date")
      * @Assert\NotBlank(message="La fecha es obligatoria.")
+     * @Assert\Regex(
+     *     pattern="/^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-[0-9]{4}$/",
+     *     message="El formato de fecha no es válido."
+     * )
      * @var \DateTime
      */
     private $fechaNacimiento;
